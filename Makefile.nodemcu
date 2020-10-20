@@ -1,0 +1,33 @@
+LWIP14_INCLUDE_DIR=$(SDK_PATH)/third_party/include
+LWIP_LIB_RELEASE_DIR=$(SDK_PATH)/lib
+LWIP_INCLUDES_RELEASE=$(SDK_PATH)/include/lwip2
+
+$(shell makefiles/patch-vendor-lwip14-nodemcu \
+	$(LWIP14_INCLUDE_DIR) \
+	$(SDK_PATH)/include \
+)
+
+$(shell makefiles/patch-non-local-includes \
+	$(SDK_PATH)/include \
+)
+
+%:
+	for v6 in 0 1; do \
+	for mss in 536 1460; do \
+	for feat in 0 1; do \
+		test \( $$feat = 0 \) -a \( $$v6 = 1 \) && continue; \
+		featname= ;\
+		test $$feat = 1 && featname=-feat ;\
+		make -f makefiles/Makefile.build-lwip2 \
+			target=nodemcu \
+			DEFINE_TARGET=NODEMCU \
+			SDK=$(SDK_PATH) \
+			LWIP_ESP=$(LWIP14_INCLUDE_DIR) \
+			LWIP_LIB=liblwip$$((2+4*v6))-$$mss$$featname.a \
+			LWIP_LIB_RELEASE=../liblwip$$((2+4*v6))-$$mss$$featname.a \
+			LWIP_INCLUDES_RELEASE=../../include \
+			TOOLS=$(abspath $(wildcard $(PREFIX)))/bin/xtensa-lx106-elf- \
+			TCP_MSS=$$mss LWIP_FEATURES=$$feat LWIP_IPV6=$$v6 \
+			BUILD=build-$$mss$$featname-v$$((4+2*v6)) \
+			$@ ; \
+	done; done; done

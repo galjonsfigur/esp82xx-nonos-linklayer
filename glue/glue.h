@@ -38,8 +38,8 @@ author: d. gauchard
 #define OPENSDK 0
 #endif
 
-#if !ARDUINO && !OPENSDK
-#error Must defined ARDUINO or OPENSDK
+#if !ARDUINO && !OPENSDK && !NODEMCU
+#error Must defined ARDUINO or OPENSDK or NODEMCU
 #endif
 
 #include "gluedebug.h"

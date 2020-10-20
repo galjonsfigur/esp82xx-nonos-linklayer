@@ -16,9 +16,13 @@ uint32_t r_rand (void);
 void* pvPortZalloc (size_t, const char*, int);
 void* pvPortMalloc (size_t xWantedSize, const char* file, int line) __attribute__((malloc, alloc_size(1)));
 void vPortFree (void *ptr, const char* file, int line);
-#else
+#elif OPENSDK
 void *pvPortZalloc (size_t sz, const char *, unsigned);
 void *pvPortMalloc (size_t sz, const char *, unsigned) __attribute__((malloc, alloc_size(1)));
+void vPortFree (void *p, const char *, unsigned);
+#elif NODEMCU
+void *pvPortZalloc (size_t sz, const char *, unsigned);
+void *pvPortMalloc (size_t sz, const char *, unsigned, bool);
 void vPortFree (void *p, const char *, unsigned);
 #endif
 
